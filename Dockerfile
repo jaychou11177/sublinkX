@@ -1,7 +1,7 @@
 # Build stage for frontend
 FROM node:18-alpine AS frontend-builder
 WORKDIR /webs
-COPY webs .
+COPY ./webs .
 RUN npm install -g pnpm && pnpm install
 RUN pnpm run build
 
