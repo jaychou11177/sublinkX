@@ -1,28 +1,17 @@
-# Build stage for frontend
-FROM node:18-alpine AS frontend-builder
-WORKDIR /webs
-COPY ./webs .
-RUN npm install -g pnpm && pnpm install
-RUN pnpm run build
-
-# Build stage for backend
-FROM golang:1.22.2-alpine AS backend-builder
+# Build stage
+FROM golang:1.22.2-alpine AS builder
 WORKDIR /app
 COPY . .
-COPY --from=frontend-builder /webs/dist /app/static
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o sublinkX
+RUN go build -o sublinkX
 
 # Final stage
 FROM alpine:latest
 WORKDIR /app
 
 # 设置时区为 Asia/Shanghai
-RUN apk add --no-cache tzdata
 ENV TZ=Asia/Shanghai
 
-# Copy backend binary
-COPY --from=backend-builder /app/sublinkX /app/sublinkX
-
+COPY --from=builder /app/sublinkX /app/sublinkX
 EXPOSE 8000
 CMD ["/app/sublinkX"]
