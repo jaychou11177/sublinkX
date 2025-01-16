@@ -11,7 +11,7 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE_NAME: ${{ vars.DOCKER_IMAGE_NAME || 'jaaksi/sublinkx' }}  # 可配置的镜像名称
+  DOCKER_IMAGE_NAME: ${{ vars.DOCKER_IMAGE_NAME || 'jxqg597/sublinkx' }}  # 可配置的镜像名称
   DOCKER_PLATFORMS: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}  # PR 时单平台，Merge 时多平台
 
 jobs:
