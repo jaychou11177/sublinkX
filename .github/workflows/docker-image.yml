@@ -11,8 +11,8 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE_NAME: ${{ vars.DOCKER_IMAGE_NAME || 'jxqg597/sublinkx' }}  # 可配置的镜像名称
-  DOCKER_PLATFORMS: linux/amd64,linux/arm64  # 目标平台
+  DOCKER_IMAGE_NAME: ${{ vars.DOCKER_IMAGE_NAME || 'jaaksi/sublinkx' }}  # 可配置的镜像名称
+  DOCKER_PLATFORMS: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}  # PR 时单平台，Merge 时多平台
 
 jobs:
   build:
@@ -58,7 +58,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          platforms: ${{ env.DOCKER_PLATFORMS }}
+          platforms: ${{ env.DOCKER_PLATFORMS }}  # 动态设置平台
           tags: |
             ${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }}
             ${{ env.DOCKER_IMAGE_NAME }}:latest
