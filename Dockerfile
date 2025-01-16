@@ -1,7 +1,7 @@
 # Build stage for frontend
 FROM node:18-alpine AS frontend-builder
 WORKDIR /webs
-COPY webs/package.json webs/pnpm-lock.yaml ./
+COPY webs/package.json ./
 RUN npm install -g pnpm && pnpm install
 COPY webs .
 RUN pnpm run build
@@ -12,13 +12,14 @@ WORKDIR /app
 COPY . .
 COPY --from=frontend-builder /webs/dist /app/static
 RUN go mod download
-RUN go build -o sublinkX
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o sublinkX
 
 # Final stage
 FROM alpine:latest
 WORKDIR /app
 
 # 设置时区为 Asia/Shanghai
+RUN apk add --no-cache tzdata
 ENV TZ=Asia/Shanghai
 
 # Copy backend binary
